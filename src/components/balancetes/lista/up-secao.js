@@ -4,16 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {  
     faSortUp
 } from '@fortawesome/free-solid-svg-icons';
-import { 
-    Button,
-    Modal
-} from 'react-bootstrap';
 import axios from 'axios';
 import Secao from '../../../models/secao.model';
+import * as constants from '../../../utils/constants';
 
 function UpSecao(props) {
 
-    const API_URL_UPDATE_SECAO = 'http://www.institutoitaquere.org.br/restful/secao/';
+    const API_URL_UPDATE_SECAO = constants.URL_BASE + constants.SECAO + '/';
 
     const [messagem, setMessagem] = useState('');
 

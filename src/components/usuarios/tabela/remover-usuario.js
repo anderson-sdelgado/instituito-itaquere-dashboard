@@ -9,10 +9,11 @@ import {
     Modal
 } from 'react-bootstrap';
 import axios from 'axios';
+import * as constants from '../../../utils/constants';
 
 function RemoverUsuario(props) {
 
-    const API_URL_REMOVER_USUARIO = 'http://www.institutoitaquere.org.br/restful/usuarios/';
+    const API_URL_REMOVER_USUARIO = constants.URL_BASE + constants.USUARIO + '/';
 
     const [exibirModal, setExibirModal] = useState(false);
     const [exibirModalSucesso, setExibirModalSucesso] = useState(false);

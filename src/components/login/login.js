@@ -13,10 +13,11 @@ import {
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import Usuario from '../../models/usuario.model';
+import * as constants from '../../utils/constants';
 
 function Login(props) {
 
-    const URL_LOGIN = 'http://www.institutoitaquere.org.br/restful/usuarios';
+    const URL_LOGIN = constants.URL_BASE + constants.USUARIO;
 
     const [nome, setNome] = useState('');
     const [senha, setSenha] = useState('');
@@ -32,18 +33,12 @@ function Login(props) {
             let { data } = await axios.post(URL_LOGIN, formData);
             if(data.status === 'success'){
                 sessionStorage.setItem('token', data.response);
-                console.log('aki 1');
                 props.setCarregarToken(true);
-                console.log('aki 2');
             } else {
-                console.log('aki 3');
                 setExibirModalErro(true);
-                console.log('aki 4');
             }
         } catch (err) {
-            console.log('aki 5');
             setExibirModalErro(true);
-            console.log('aki 6');
         }
     }
 

@@ -1,7 +1,6 @@
 import {
     useState,
     useEffect,
-    useRef,
 } from 'react';
 import { 
     Card,
@@ -10,17 +9,17 @@ import {
     Row,
     Col,
     Form,
-    Modal,
-    Image
+    Modal
 } from 'react-bootstrap';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import Documento from '../../../../models/documento.model';
+import * as constants from '../../../../utils/constants';
 
 function EditarDocumento(props) {
 
-    const URL_DOC = 'http://www.institutoitaquere.org.br/restful/doc/';
-    const URL_CADASTRAR_DOCUMENTO = 'http://www.institutoitaquere.org.br/restful/documento/';
+    const URL_DOC = constants.URL_BASE + constants.LOCAL_DOC;
+    const URL_CADASTRAR_DOCUMENTO = constants.URL_BASE + constants.DOCUMENTO + '/';
 
     const [descricaoDocumento, setDescricaoDocumento] = useState('');
     const [documento, setDocumento] = useState();

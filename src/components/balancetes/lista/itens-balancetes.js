@@ -15,13 +15,14 @@ import DownDocumento from './down-documento';
 import UpDocumento from './up-documento';
 import DownSecao from './down-secao';
 import UpSecao from './up-secao';
+import * as constants from '../../../utils/constants';
 
 function ItensBalancetes(props) {
 
     let key = 0;
 
-    const API_URL_REMOVER_DOCUMENTO = 'http://www.institutoitaquere.org.br/restful/documento/';
-    const API_URL_REMOVER_SECAO = 'http://www.institutoitaquere.org.br/restful/secao/';
+    const API_URL_REMOVER_DOCUMENTO = constants.URL_BASE + constants.DOCUMENTO + '/';
+    const API_URL_REMOVER_SECAO = constants.URL_BASE + constants.SECAO + '/';
 
     const [exibirModal, setExibirModal] = useState(false);
     const [exibirModalSucesso, setExibirModalSucesso] = useState(false);

@@ -8,16 +8,16 @@ import {
     Row,
     Col,
     Form,
-    Modal,
-    Image
+    Modal
 } from 'react-bootstrap';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import Documento from '../../../../models/documento.model';
+import * as constants from '../../../../utils/constants';
 
 function CadastrarDocumento(props) {
 
-    const URL_CADASTRAR_DOCUMENTO = 'http://www.institutoitaquere.org.br/restful/documento';
+    const URL_CADASTRAR_DOCUMENTO = constants.URL_BASE + constants.DOCUMENTO;
 
     const [descricaoDocumento, setDescricaoDocumento] = useState('');
     const [documento, setDocumento] = useState();

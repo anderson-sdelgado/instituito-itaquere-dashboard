@@ -11,57 +11,79 @@ import {
     Col,
     Form,
     Modal,
-    Image
+    Image,
+    Spinner
 } from 'react-bootstrap';
 import Noticia from '../../../models/noticia.model';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import GaleriaImagensServer from './galeria-imagens-server';
 import GaleriaImagensUpload from './galeria-imagens-upload';
+import GaleriaVideoServer from './galeria-video-server';
+import GaleriaVideoUpload from './galeria-video-upload';
+import * as constants from '../../../utils/constants';
 
 function EditarNoticia(props) {
 
-    const URL_IMG = 'http://www.institutoitaquere.org.br/restful/img/';
-    const URL_CADASTRAR_NOTICIA = 'http://www.institutoitaquere.org.br/restful/noticias';
-    const API_URL_LISTAR_GALERIA = 'http://www.institutoitaquere.org.br/restful/galeria/';
+    const URL_IMG = constants.URL_BASE + constants.LOCAL_IMG;
+    const CADASTRAR_NOTICIA = constants.URL_BASE + constants.NOTICIA;
+    const LISTAR_GALERIA = constants.URL_BASE + constants.GALERIA + '/';
+    const LISTAR_VIDEO = constants.URL_BASE + constants.VIDEO + '/';
 
     const [capa, setCapa] = useState('');
-    const [galeriaServer, setGaleriaServer] = useState([]);
-    const [galeriaUpload, setGaleriaUpload] = useState([]);
+    const [galeriaImagensServer, setGaleriaImagensServer] = useState([]);
+    const [galeriaImagensUpload, setGaleriaImagensUpload] = useState([]);
+    const [galeriaVideoServer, setGaleriaVideoServer] = useState([]);
+    const [galeriaVideoUpload, setGaleriaVideoUpload] = useState([]);
     const [imagem, setImagem] = useState();
     const [codigo, setCodigo] = useState('');
     const [titulo, setTitulo] = useState('');
     const [conteudo, setConteudo] = useState('');
     const [exibirModalSucesso, setExibirModalSucesso] = useState(false);
     const [exibirModalErro, setExibirModalErro] = useState(false);
-    const [exibirImagens, setExibirImagens] = useState(false);
-    const [qtdeGaleria, setQtdeGaleria] = useState(0);
+    const [exibirImage, setExibirImage] = useState(false);
+    const [qtdeGaleriaImagens, setQtdeGaleriaImagens] = useState(0);
+    const [qtdeGaleriaVideo, setQtdeGaleriaVideo] = useState(0);
     const [messagem, setMessagem] = useState('');
+    const [exibirProcessando, setExibirProcessando] = useState(false);
 
     const capaElement = useRef();
     const galeriaElement = useRef();
 
     useEffect(() => {
 
+        async function obterGaleriaImage(){
+            let { data } = await axios.get(LISTAR_GALERIA + props.noticia.codigo);
+            setGaleriaImagensServer(data.data);
+            setQtdeGaleriaImagens(data.data.length);
+        }
+
+        async function obterGaleiraVideo(){
+            let { data } = await axios.get(LISTAR_VIDEO + props.noticia.codigo);
+            setGaleriaVideoServer(data.data);
+            setQtdeGaleriaVideo(data.data.length);
+        }
+
         async function obterNoticia(){
             
-            setGaleriaUpload([]);
+            setGaleriaImagensUpload([]);
+            setGaleriaVideoUpload([]);
             setImagem();
-            let { data } = await axios.get(API_URL_LISTAR_GALERIA + props.noticia.codigo);
-            setGaleriaServer(data.data);
             setCodigo(props.noticia.codigo);
             setTitulo(props.noticia.titulo);
             setConteudo(props.noticia.conteudo);
             setCapa(URL_IMG + props.noticia.capa);
-            setExibirImagens(true);
-            setQtdeGaleria(data.data.length);
+            setExibirImage(true);
+            setExibirProcessando(false);
+            
             capaElement.current.required = false;
-
             capaElement.current.value = "";
             galeriaElement.current.value = "";
         }
 
         if(props.carregarNoticia){
+            obterGaleriaImage();
+            obterGaleiraVideo()
             obterNoticia();
             props.setCarregarNoticia(false);
         }
@@ -70,17 +92,26 @@ function EditarNoticia(props) {
     async function salvarNoticia(event){
         try {
             event.preventDefault();
+            setExibirProcessando(true);
             const novaNoticia = new Noticia(conteudo, titulo);
             const formData = new FormData();
             formData.append('image', imagem);
             formData.append('data', JSON.stringify(novaNoticia));
-            galeriaUpload.map((img, index) => {
+
+            galeriaImagensUpload.map((img, index) => {
                 var cod = index + 1;
                 formData.append('gallery' + cod, img);
             });
-            formData.append('galleryserver', JSON.stringify(galeriaServer));
+            formData.append('galleryserver', JSON.stringify(galeriaImagensServer));
+            
+            galeriaVideoUpload.map((video, index) => {
+                var cod = index + 1;
+                formData.append('video' + cod, video);
+            });
+            formData.append('videoserver', JSON.stringify(galeriaVideoServer));
+
             formData.append('method', 'put');
-            let { data } = await axios.post(URL_CADASTRAR_NOTICIA + '/' + codigo, formData);
+            let { data } = await axios.post(CADASTRAR_NOTICIA + '/' + codigo, formData);
             if(data.status==='success'){
                 setMessagem(data.response);
                 setExibirModalSucesso(true);
@@ -95,7 +126,7 @@ function EditarNoticia(props) {
     }
 
     function visivelCapa() {
-        return exibirImagens ? null : 'hidden';
+        return exibirImage ? null : 'hidden';
     }
 
     function visivel() {
@@ -104,12 +135,16 @@ function EditarNoticia(props) {
 
     function handleImage(event){
         setImagem(event.target.files[0]);
-        setExibirImagens(true);
+        setExibirImage(true);
         setCapa(URL.createObjectURL(event.target.files[0]));
     }
 
-    function handleGallery(event){
-        setGaleriaUpload(Array.from(event.target.files));
+    function handleGalleryImagens(event){
+        setGaleriaImagensUpload(Array.from(event.target.files));
+    }
+
+    function handleGalleryVideo(event){
+        setGaleriaVideoUpload(Array.from(event.target.files));
     }
 
     function handleTxtTitulo(event){
@@ -132,12 +167,20 @@ function EditarNoticia(props) {
         props.setRecarregarNoticias(true);
     }
 
-    function handleGaleriaServer(codigo){
-        setGaleriaServer(galeriaServer.filter(img => img.codigo !== codigo));
+    function handleGaleriaImagensServer(codigo){
+        setGaleriaImagensServer(galeriaImagensServer.filter(image => image.codigo !== codigo));
     }
 
-    function handleGaleriaUpload(imagem){
-        setGaleriaUpload(galeriaUpload.filter(img => img !== imagem));
+    function handleGaleriaImagensUpload(imageRet){
+        setGaleriaImagensUpload(galeriaImagensUpload.filter(image => image !== imageRet));
+    }
+
+    function handleGaleriaVideoServer(codigo){
+        setGaleriaVideoServer(galeriaVideoServer.filter(video => video.codigo !== codigo));
+    }
+
+    function handleGaleriaVideoUpload(videoRet){
+        setGaleriaVideoUpload(galeriaVideoUpload.filter(video => video !== videoRet));
     }
 
     return ( 
@@ -237,7 +280,7 @@ function EditarNoticia(props) {
                                     md={10}>
                                     <Form.Control
                                         type="file" multiple
-                                        onChange={handleGallery}
+                                        onChange={handleGalleryImagens}
                                         accept="image/png, image/jpeg"
                                         ref={galeriaElement} />
                                 </Col>
@@ -245,12 +288,39 @@ function EditarNoticia(props) {
                             <Form.Group
                                 as={Row} >
                                 <GaleriaImagensServer 
-                                    imagens={galeriaServer}
-                                    handleGaleriaServer={handleGaleriaServer}/>
+                                    imagens={galeriaImagensServer}
+                                    handleGaleriaImagensServer={handleGaleriaImagensServer}/>
                                 <GaleriaImagensUpload 
-                                    imagens={galeriaUpload}
-                                    qtdeGaleria={qtdeGaleria}
-                                    handleGaleriaUpload={handleGaleriaUpload}/>
+                                    imagens={galeriaImagensUpload}
+                                    qtdeGaleriaImagens={qtdeGaleriaImagens}
+                                    handleGaleriaImagensUpload={handleGaleriaImagensUpload}/>
+                            </Form.Group>
+                            <Form.Group
+                                as={Row}
+                                className="mt-2">
+                                <Form.Label
+                                        column
+                                        md={2}>
+                                    Video (MP4):
+                                </Form.Label>
+                                <Col 
+                                    md={10}>
+                                    <Form.Control
+                                        type="file" multiple
+                                        onChange={handleGalleryVideo}
+                                        accept="video/mp4"
+                                        ref={galeriaElement} />
+                                </Col>
+                            </Form.Group>
+                            <Form.Group
+                                as={Row} >
+                                <GaleriaVideoServer 
+                                    videos={galeriaVideoServer}
+                                    handleGaleriaVideoServer={handleGaleriaVideoServer}/>
+                                <GaleriaVideoUpload 
+                                    videos={galeriaVideoUpload}
+                                    qtdeGaleriaVideo={qtdeGaleriaVideo}
+                                    handleGaleriaVideoUpload={handleGaleriaVideoUpload}/>
                             </Form.Group>
                             <Form.Group 
                                 as={Row} 
@@ -265,13 +335,19 @@ function EditarNoticia(props) {
                                     </Button>
                                 </Col>
                                 <Col 
-                                    className="text-start"
-                                    md={6}>
+                                    md={6}
+                                    className={exibirProcessando ? 'hidden' : 'text-start'} >
                                     <Button 
                                         variant="primary" 
-                                        type="submit">
+                                        type="submit" >
                                         Salvar
                                     </Button>
+                                </Col>
+                                <Col 
+                                    md={6}
+                                    className={exibirProcessando ? 'text-start' : 'hidden'}>
+                                    <Spinner
+                                        animation="border"/>
                                 </Col>
                             </Form.Group>
                         </Form>

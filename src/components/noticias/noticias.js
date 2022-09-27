@@ -16,10 +16,11 @@ import {
     Button
 } from 'react-bootstrap';
 import axios from 'axios';
+import * as constants from '../../utils/constants';
 
 function Noticias() {
 
-    const API_URL_LISTAR_NOTICIAS = 'http://www.institutoitaquere.org.br/restful/noticias';
+    const URL_LISTAR_NOTICIAS = constants.URL_BASE + constants.NOTICIA;
 
     const [exibirTabela, setExibirTabela] = useState(true);
     const [exibirEditar, setExibirEditar] = useState(false);
@@ -51,7 +52,7 @@ function Noticias() {
                     ordem = 'titulo DESC';
                 } 
                 const params = `?page=${paginaAtual}&countpage=${countPage}&order=${ordem}&filter=${filtro}`;
-                let { data } = await axios.get(API_URL_LISTAR_NOTICIAS + params);
+                let { data } = await axios.get(URL_LISTAR_NOTICIAS + params);
                 if(data.status==='success'){
                     setNoticias(data.data);
                     setTotalItems(parseInt(data.count));

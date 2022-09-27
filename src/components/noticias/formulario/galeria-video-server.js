@@ -1,31 +1,31 @@
 import { 
     Card,
-    Image,
     Button
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import * as constants from '../../../utils/constants';
+import { Player } from 'video-react';
 
-function GaleriaImagensServer(props) {
+function GaleriaVideoServer(props) {
 
-    const URL_IMG = constants.URL_BASE + constants.LOCAL_IMG;
+    const URL_VIDEO = constants.URL_BASE + constants.LOCAL_VIDEO;
 
-    function handleExcluirImagem(event, codigo){
+    function handleExcluirVideo(event, codigo){
         event.preventDefault();
-        props.handleGaleriaImagensServer(codigo);
+        props.handleGaleriaVideoServer(codigo);
     }
 
     return ( 
-        props.imagens.map(img => 
+        props.videos.map(v => 
             <Card 
-                key= {img.codigo}
+                key= {v.codigo}
                 style={{ 
                     width: '18rem',
                     margin: '10px',
                     float: 'left' }}>
                 <Card.Header >
                     <Button 
-                        onClick={(event) => handleExcluirImagem(event, img.codigo)} 
+                        onClick={(event) => handleExcluirVideo(event, v.codigo)} 
                         variant="danger"
                         style={{ 
                             width: '100%'}}>
@@ -33,19 +33,19 @@ function GaleriaImagensServer(props) {
                     </Button>
                 </Card.Header>
                 <Card.Body>
-                    <Image 
-                        src={URL_IMG + img.image}
-                        style={{ 
-                            width: '15rem' }}/>
+                <Player
+                    playsInline
+                    src={URL_VIDEO + v.video}
+                    />
                 </Card.Body>
             </Card>
         )
     );
 }
 
-GaleriaImagensServer.propTypes = {
-    imagens: PropTypes.array.isRequired,
-    handleGaleriaImagensServer: PropTypes.func.isRequired
+GaleriaVideoServer.propTypes = {
+    videos: PropTypes.array.isRequired,
+    handleGaleriaVideoServer: PropTypes.func.isRequired
 }
 
-export default GaleriaImagensServer;
+export default GaleriaVideoServer;

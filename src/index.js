@@ -4,6 +4,7 @@ import './index.css';
 import Dashboard from './dashboard';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'video-react/dist/video-react.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

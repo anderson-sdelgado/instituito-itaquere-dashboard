@@ -13,10 +13,11 @@ import {
 import Usuario from '../../../models/usuario.model';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import * as constants from '../../../utils/constants';
 
 function CadastrarUsuario(props) {
 
-    const URL_CADASTRAR_USUARIO = 'http://www.institutoitaquere.org.br/restful/usuarios';
+    const URL_CADASTRAR_USUARIO = constants.URL_BASE + constants.USUARIO;
 
     const [nome, setNome] = useState('');
     const [senha, setSenha] = useState('');

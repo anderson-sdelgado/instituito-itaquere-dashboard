@@ -13,10 +13,11 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import Noticia from '../../../models/noticia.model';
+import * as constants from '../../../utils/constants';
 
 function AlterarStatusNoticia(props) {
 
-    const API_URL_REMOVER_NOTICIA = 'http://www.institutoitaquere.org.br/restful/noticias/';
+    const URL_REMOVER_NOTICIA =  constants.URL_BASE + constants.NOTICIA + '/';
 
     const [exibirModal, setExibirModal] = useState(false);
     const [exibirModalSucesso, setExibirModalSucesso] = useState(false);
@@ -58,7 +59,7 @@ function AlterarStatusNoticia(props) {
             const formData = new FormData();
             formData.append('data', JSON.stringify(novaNoticia));
             formData.append('method', 'status');
-            let { data } = await axios.post(API_URL_REMOVER_NOTICIA + props.noticia.codigo, formData);
+            let { data } = await axios.post(URL_REMOVER_NOTICIA + props.noticia.codigo, formData);
             setExibirModal(false);
             if(data.status==='success'){
                 setMessagem(data.response);

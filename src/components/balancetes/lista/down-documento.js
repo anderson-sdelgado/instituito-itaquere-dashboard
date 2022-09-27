@@ -10,10 +10,11 @@ import {
 } from 'react-bootstrap';
 import axios from 'axios';
 import Documento from '../../../models/documento.model';
+import * as constants from '../../../utils/constants';
 
 function DownDocumento(props) {
 
-    const API_URL_UPDATE_DOCUMENTO = 'http://www.institutoitaquere.org.br/restful/documento/';
+    const API_URL_UPDATE_DOCUMENTO = constants.URL_BASE + constants.DOCUMENTO + '/';
 
     const [messagem, setMessagem] = useState('');
 

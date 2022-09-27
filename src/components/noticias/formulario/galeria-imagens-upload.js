@@ -9,11 +9,11 @@ function GaleriaImagensUpload(props) {
 
     function handleExcluirImagem(event, img){
         event.preventDefault();
-        props.handleGaleriaUpload(img);
+        props.handleGaleriaImagensUpload(img);
     }
 
     function render() {
-        let key = props.qtdeGaleria;
+        let key = props.qtdeGaleriaImagens;
         const cols = props.imagens.map(img => 
             <Card  
                 key= {key++} 
@@ -46,8 +46,8 @@ function GaleriaImagensUpload(props) {
 
 GaleriaImagensUpload.propTypes = {
     imagens: PropTypes.array.isRequired,
-    qtdeGaleria: PropTypes.number.isRequired,
-    handleGaleriaUpload: PropTypes.func.isRequired
+    qtdeGaleriaImagens: PropTypes.number.isRequired,
+    handleGaleriaImagensUpload: PropTypes.func.isRequired
 }
 
 export default GaleriaImagensUpload;

@@ -11,19 +11,23 @@ import {
     Col,
     Form,
     Modal,
-    Image
+    Image,
+    Spinner
 } from 'react-bootstrap';
 import Noticia from '../../../models/noticia.model';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import GaleriaImagensUpload from './galeria-imagens-upload';
+import GaleriaVideoUpload from './galeria-video-upload';
+import * as constants from '../../../utils/constants';
 
 function EditarNoticia(props) {
 
-    const URL_CADASTRAR_NOTICIA = 'http://www.institutoitaquere.org.br/restful/noticias';
+    const URL_CADASTRAR_NOTICIA = constants.URL_BASE + constants.NOTICIA;
 
     const [capa, setCapa] = useState('');
-    const [galeriaUpload, setGaleriaUpload] = useState([]);
+    const [galeriaImagensUpload, setGaleriaImagensUpload] = useState([]);
+    const [galeriaVideoUpload, setGaleriaVideoUpload] = useState([]);
     const [imagem, setImagem] = useState();
     const [codigo, setCodigo] = useState('');
     const [titulo, setTitulo] = useState('');
@@ -31,25 +35,32 @@ function EditarNoticia(props) {
     const [exibirModalSucesso, setExibirModalSucesso] = useState(false);
     const [exibirModalErro, setExibirModalErro] = useState(false);
     const [exibirImagens, setExibirImagens] = useState(false);
-    const [qtdeGaleria, setQtdeGaleria] = useState(0);
+    const [qtdeGaleriaImagens, setQtdeGaleriaImagens] = useState(0);
+    const [qtdeGaleriaVideo, setQtdeGaleriaVideo] = useState(0);
     const [messagem, setMessagem] = useState('');
+    const [exibirProcessando, setExibirProcessando] = useState(false);
 
     const capaElement = useRef();
     const galeriaElement = useRef();
+    const videoElement = useRef();
 
     useEffect(() => {
 
         function obterNoticia(){
-            setGaleriaUpload([]);
+            setGaleriaImagensUpload([]);
+            setGaleriaVideoUpload([]);
             setImagem();
             setCodigo('');
             setTitulo('');
             setConteudo('');
             setExibirImagens(false);
-            setQtdeGaleria(0);
+            setQtdeGaleriaImagens(0);
+            setQtdeGaleriaVideo(0);
+            setExibirProcessando(false);
             capaElement.current.required = true;
             capaElement.current.value = "";
             galeriaElement.current.value = "";
+            videoElement.current.value = "";
         }
 
         if(props.carregarNoticia){
@@ -61,13 +72,18 @@ function EditarNoticia(props) {
     async function salvarNoticia(event){
         try {
             event.preventDefault();
+            setExibirProcessando(true);
             const novaNoticia = new Noticia(conteudo, titulo);
             const formData = new FormData();
             formData.append('image', imagem);
             formData.append('data', JSON.stringify(novaNoticia));
-            galeriaUpload.map((img, index) => {
+            galeriaImagensUpload.map((img, index) => {
                 var cod = index + 1;
                 formData.append('gallery' + cod, img);
+            });
+            galeriaVideoUpload.map((img, index) => {
+                var cod = index + 1;
+                formData.append('video' + cod, img);
             });
             formData.append('method', 'post');
             let { data } = await axios.post(URL_CADASTRAR_NOTICIA, formData);
@@ -79,6 +95,7 @@ function EditarNoticia(props) {
                 setExibirModalErro(true);
             }
         } catch (err) {
+            console.log(err);
             setMessagem("Erro na Criação de Novo Registro: " + err.message);
             setExibirModalErro(true);
         }
@@ -98,8 +115,12 @@ function EditarNoticia(props) {
         setCapa(URL.createObjectURL(event.target.files[0]));
     }
 
-    function handleGallery(event){
-        setGaleriaUpload(Array.from(event.target.files));
+    function handleGalleryImagens(event){
+        setGaleriaImagensUpload(Array.from(event.target.files));
+    }
+
+    function handleGalleryVideo(event){
+        setGaleriaVideoUpload(Array.from(event.target.files));
     }
 
     function handleTxtTitulo(event){
@@ -122,8 +143,12 @@ function EditarNoticia(props) {
         props.setRecarregarNoticias(true);
     }
 
-    function handleGaleriaUpload(imagem){
-        setGaleriaUpload(galeriaUpload.filter(img => img !== imagem));
+    function handleGaleriaImagensUpload(retImage){
+        setGaleriaImagensUpload(galeriaImagensUpload.filter(image => image !== retImage));
+    }
+
+    function handleGaleriaVideoUpload(retVideo){
+        setGaleriaVideoUpload(galeriaVideoUpload.filter(video => video !== retVideo));
     }
 
     return ( 
@@ -223,7 +248,7 @@ function EditarNoticia(props) {
                                     md={10}>
                                     <Form.Control
                                         type="file" multiple
-                                        onChange={handleGallery}
+                                        onChange={handleGalleryImagens}
                                         accept="image/png, image/jpeg"
                                         ref={galeriaElement} />
                                 </Col>
@@ -231,9 +256,33 @@ function EditarNoticia(props) {
                             <Form.Group
                                 as={Row} >
                                 <GaleriaImagensUpload 
-                                    imagens={galeriaUpload}
-                                    qtdeGaleria={qtdeGaleria}
-                                    handleGaleriaUpload={handleGaleriaUpload}/>
+                                    imagens={galeriaImagensUpload}
+                                    qtdeGaleriaImagens={qtdeGaleriaImagens}
+                                    handleGaleriaImagensUpload={handleGaleriaImagensUpload}/>
+                            </Form.Group>
+                            <Form.Group
+                                as={Row}
+                                className="mt-2">
+                                <Form.Label
+                                        column
+                                        md={2}>
+                                    Video (MP4):
+                                </Form.Label>
+                                <Col 
+                                    md={10}>
+                                    <Form.Control
+                                        type="file" multiple
+                                        onChange={handleGalleryVideo}
+                                        accept="video/mp4"
+                                        ref={videoElement} />
+                                </Col>
+                            </Form.Group>
+                            <Form.Group
+                                as={Row} >
+                                <GaleriaVideoUpload
+                                    videos={galeriaVideoUpload}
+                                    qtdeGaleriaVideo={qtdeGaleriaVideo}
+                                    handleGaleriaVideoUpload={handleGaleriaVideoUpload}/>
                             </Form.Group>
                             <Form.Group 
                                 as={Row} 
@@ -248,13 +297,19 @@ function EditarNoticia(props) {
                                     </Button>
                                 </Col>
                                 <Col 
-                                    className="text-start"
-                                    md={6}>
+                                    md={6}
+                                    className={exibirProcessando ? 'hidden' : 'text-start'} >
                                     <Button 
                                         variant="primary" 
-                                        type="submit">
+                                        type="submit" >
                                         Salvar
                                     </Button>
+                                </Col>
+                                <Col 
+                                    md={6}
+                                    className={exibirProcessando ? 'text-start' : 'hidden'}>
+                                    <Spinner
+                                        animation="border"/>
                                 </Col>
                             </Form.Group>
                         </Form>

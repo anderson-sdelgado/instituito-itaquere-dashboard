@@ -13,10 +13,11 @@ import {
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import Secao from '../../../../models/secao.model';
+import * as constants from '../../../../utils/constants';
 
 function CadastrarSecao(props) {
 
-    const URL_CADASTRAR_SECAO = 'http://www.institutoitaquere.org.br/restful/secao';
+    const URL_CADASTRAR_SECAO = constants.URL_BASE + constants.SECAO;
 
     const [descricaoSecao, setDescricaoSecao] = useState('');
     const [messagem, setMessagem] = useState('');

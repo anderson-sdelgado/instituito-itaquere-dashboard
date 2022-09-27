@@ -17,12 +17,12 @@ import CadastrarSecao from './formulario/secao/cadastrar-secao';
 import EditarSecao from './formulario/secao/editar-secao';
 import CadastrarDocumento from './formulario/documento/cadastrar-documento';
 import EditarDocumento from './formulario/documento/editar-documento';
-
+import * as constants from '../../utils/constants';
 
 function Balancetes() {
 
-    const API_URL_LISTAR_SECAO = 'http://www.institutoitaquere.org.br/restful/secao';
-    const API_URL_LISTAR_DOCUMENTO = 'http://www.institutoitaquere.org.br/restful/documento';
+    const URL_LISTAR_SECAO = constants.URL_BASE + constants.SECAO;
+    const URL_LISTAR_DOCUMENTO = constants.URL_BASE + constants.DOCUMENTO;
 
     const [secoes, setSecoes] = useState([]);
     const [documentos, setDocumentos] = useState([]);
@@ -43,14 +43,12 @@ function Balancetes() {
     useEffect(() => {
 
         async function obterSecao(){
-            let { data } = await axios.get(API_URL_LISTAR_SECAO);
-            console.log(data.data);
+            let { data } = await axios.get(URL_LISTAR_SECAO);
             setSecoes(data.data);
         }
 
         async function obterDocumento(){
-            let { data } = await axios.get(API_URL_LISTAR_DOCUMENTO);
-            console.log(data.data);
+            let { data } = await axios.get(URL_LISTAR_DOCUMENTO);
             setDocumentos(data.data);
         }
 

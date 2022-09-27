@@ -9,10 +9,11 @@ import {
 } from 'react-bootstrap';
 import RemoverNoticia from './remover-noticia';
 import AlterarStatusNoticia from './alterar-status-noticia';
+import * as constants from '../../../utils/constants';
 
 function ItensTabelaNoticias(props) {
 
-    const URL_IMG = 'http://www.institutoitaquere.org.br/restful/img/';
+    const URL_IMG = constants.URL_BASE + constants.LOCAL_IMG;
 
     function handleEditarNoticia(event, noticia){
         event.preventDefault();

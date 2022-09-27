@@ -9,10 +9,11 @@ import {
     Modal
 } from 'react-bootstrap';
 import axios from 'axios';
+import * as constants from '../../../utils/constants';
 
 function RemoverNoticia(props) {
 
-    const API_URL_REMOVER_NOTICIA = 'http://www.institutoitaquere.org.br/restful/noticias/';
+    const URL_REMOVER_NOTICIA = constants.URL_BASE + constants.NOTICIA + '/';
 
     const [exibirModal, setExibirModal] = useState(false);
     const [exibirModalSucesso, setExibirModalSucesso] = useState(false);
@@ -41,7 +42,7 @@ function RemoverNoticia(props) {
     async function handleRemoverNoticia(event){
         event.preventDefault();
         try {
-            let { data } = await axios.delete(API_URL_REMOVER_NOTICIA + props.noticia.codigo);
+            let { data } = await axios.delete(URL_REMOVER_NOTICIA + props.noticia.codigo);
             setExibirModal(false);
             if(data.status==='success'){
                 setMessagem(data.response);
