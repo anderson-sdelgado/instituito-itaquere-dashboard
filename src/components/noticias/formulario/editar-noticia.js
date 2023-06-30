@@ -22,7 +22,6 @@ import GaleriaImagensUpload from './galeria-imagens-upload';
 import GaleriaVideoServer from './galeria-video-server';
 import GaleriaVideoUpload from './galeria-video-upload';
 import * as constants from '../../../utils/constants';
-
 function EditarNoticia(props) {
 
     const URL_IMG = constants.URL_BASE + constants.LOCAL_IMG;

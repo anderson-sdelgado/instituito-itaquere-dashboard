@@ -1,5 +1,5 @@
-// export const URL_BASE = 'http://www.institutoitaquere.org.br/restful/';
-export const URL_BASE = 'http://localhost/restful/';
+export const URL_BASE = 'http://www.institutoitaquere.org.br/restful/';
+//export const URL_BASE = 'http://localhost/restful/';
 export const DOCUMENTO = 'documento';
 export const SECAO = 'secao';
 export const USUARIO = 'usuarios';
